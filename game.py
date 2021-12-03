@@ -2,7 +2,7 @@ from state import State
 from state import victory_conditions as victory
 
 
-def is_victory(player_state, victory_condition):
+def __is_victory(player_state, victory_condition):
     mask = player_state & victory_condition
     if mask ^ victory_condition == 0:
         return True
@@ -13,13 +13,13 @@ def __score(current_player_state, opposing_player_state):
     opposing_player_victory_states_possible = ~opposing_player_state | current_player_state
     state_score = 0
     for victory_condition in victory:
-        if is_victory(current_player_state, victory_condition):
+        if __is_victory(current_player_state, victory_condition):
             state_score += 100
-        if is_victory(opposing_player_state, victory_condition):
+        if __is_victory(opposing_player_state, victory_condition):
             state_score -= 100
-        if is_victory(current_player_victory_states_possible, victory_condition):
+        if __is_victory(current_player_victory_states_possible, victory_condition):
             state_score += 1
-        if is_victory(opposing_player_victory_states_possible, victory_condition):
+        if __is_victory(opposing_player_victory_states_possible, victory_condition):
             state_score -= 1
 
     return state_score
@@ -40,9 +40,9 @@ def is_terminal(state: State, is_depth_remaining: bool, is_time_remaining: bool)
     if not is_depth_remaining or not is_time_remaining:
         return True
     for victory_condition in victory:
-        if is_victory(state.player1_state, victory_condition):
+        if __is_victory(state.player1_state, victory_condition):
             return True
-        elif is_victory(state.player2_state, victory_condition):
+        elif __is_victory(state.player2_state, victory_condition):
             return True
     if state.player1_state | state.player2_state == 0x01FF:
         return True
