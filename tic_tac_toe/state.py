@@ -20,30 +20,25 @@ victory_conditions = [_horiz_top, _horiz_center, _horiz_bottom,
                       _diag_right, _diag_left]
 
 
-class Status(Enum):
-    IN_PROGRESS = 0
-    DONE = 1
-    ILLEGAL_STATE = -1
-
-
 class State:
+    def __eq__(self, other):
+        return self.current_player == other.current_player and \
+            self.player1_state == other.player1_state and \
+            self.player2_state == other.player2_state
+
     def __init__(self):
-        self.empty = 0
         self.player1 = 1
         self.player2 = 2
         self.current_player = self.player1
         self.player1_state = 0x0000
         self.player2_state = 0x0000
-        self.status = Status.IN_PROGRESS
-        self.winner = None
 
     def copy(self):
         copy_state = State()
         copy_state.current_player = self.current_player
-        copy_state.status = self.status
-        copy_state.player1_state = self.player1_state.copy()
-        copy_state.player2_state = self.player2_state.copy()
+        copy_state.player1_state = self.player1_state
+        copy_state.player2_state = self.player2_state
         return copy_state
 
     def next_player(self):
-        return 1 if self.current_player is 0 else 0
+        return self.player1 if self.current_player == self.player2 else self.player2
