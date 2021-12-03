@@ -8,22 +8,32 @@ def is_victory(player_state, victory_condition):
         return True
 
 
-def evaluate_state(state: State):
-    # invert the player 2 state and combine it to get available or
-    p1_victory_states_possible = state.player1_state | ~state.player2_state
-    p2_victory_states_possible = state.player2_state | ~state.player1_state
-    # If I recall correctly, the scoring here is what bothers me.
+def __score(current_player_state, opposing_player_state):
+    current_player_victory_states_possible = current_player_state | ~opposing_player_state
+    opposing_player_victory_states_possible = ~opposing_player_state | current_player_state
     state_score = 0
     for victory_condition in victory:
-        if is_victory(state.player1_state, victory_condition):
-            state_score += 10
-        if is_victory(state.player2_state, victory_condition):
-            state_score += -10
-        if is_victory(p1_victory_states_possible, victory_condition):
+        if is_victory(current_player_state, victory_condition):
+            state_score += 100
+        if is_victory(opposing_player_state, victory_condition):
+            state_score -= 100
+        if is_victory(current_player_victory_states_possible, victory_condition):
             state_score += 1
-        if is_victory(p2_victory_states_possible, victory_condition):
-            state_score += -1
+        if is_victory(opposing_player_victory_states_possible, victory_condition):
+            state_score -= 1
+
     return state_score
+
+
+def __evaluating_state_function(maximizing_player, state):
+    if maximizing_player == state.player1:
+        return __score(state.player1_state)
+    else:
+        return __score(state.player2_state)
+
+
+def evaluating_state_function(maximizing_player):
+    return lambda s: evaluating_state_function(maximizing_player, s)
 
 
 def is_terminal(state: State, is_depth_remaining: bool, is_time_remaining: bool):
