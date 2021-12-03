@@ -1,9 +1,5 @@
 from state import State
-from state import victory_conditions
-
-
-def eval(state: State):
-    pass
+from state import victory_conditions as victory
 
 
 def is_victory(player_state, victory_condition):
@@ -11,14 +7,35 @@ def is_victory(player_state, victory_condition):
     if mask ^ victory_condition == 0:
         return True
 
+
+def evaluate_state(state: State):
+    # invert the player 2 state and combine it to get available or
+    p1_victory_states_possible = state.player1_state | ~state.player2_state
+    p2_victory_states_possible = state.player2_state | ~state.player1_state
+    # If I recall correctly, the scoring here is what bothers me.
+    state_score = 0
+    for victory_condition in victory:
+        if is_victory(state.player1_state, victory_condition):
+            state_score += 10
+        if is_victory(state.player2_state, victory_condition):
+            state_score += -10
+        if is_victory(p1_victory_states_possible, victory_condition):
+            state_score += 1
+        if is_victory(p2_victory_states_possible, victory_condition):
+            state_score += -1
+    return state_score
+
+
 def is_terminal(state: State, is_depth_remaining: bool, is_time_remaining: bool):
     if not is_depth_remaining or not is_time_remaining:
         return True
-    for victory_condition in state.victory_conditions:
+    for victory_condition in victory:
         if is_victory(state.player1_state, victory_condition):
             return True
         elif is_victory(state.player2_state, victory_condition):
             return True
+    if state.player1_state | state.player2_state == 0x01FF:
+        return True
     return False
 
 
