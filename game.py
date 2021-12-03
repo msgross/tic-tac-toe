@@ -27,13 +27,13 @@ def __score(current_player_state, opposing_player_state):
 
 def __evaluating_state_function(maximizing_player, state):
     if maximizing_player == state.player1:
-        return __score(state.player1_state)
+        return __score(state.player1_state, state.player2_state)
     else:
-        return __score(state.player2_state)
+        return __score(state.player2_state, state.player1_state)
 
 
 def evaluating_state_function(maximizing_player):
-    return lambda s: evaluating_state_function(maximizing_player, s)
+    return lambda s: __evaluating_state_function(maximizing_player, s)
 
 
 def is_terminal(state: State, is_depth_remaining: bool, is_time_remaining: bool):
@@ -63,7 +63,7 @@ def actions(state: State):
 
     valid_moves = []
     all_state = state.player1_state | state.player2_state
-    for shift in range(0,9):
+    for shift in range(0, 9):
         move = 0x01 << shift
         masked_state = all_state & move
         if masked_state == 0:
