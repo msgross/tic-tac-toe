@@ -1,17 +1,38 @@
+"""
+Defines game rules for tic-tac-toe
+"""
+
 from tic_tac_toe.state import State
 from tic_tac_toe.state import victory_conditions as victory
 
 # mask out the bits we aren't using for evaluation
-__MASK = 0x01ff
+__MASK = 0x01ff  # 0000000111111111
 
 
 def __is_victory(player_state, victory_condition):
+    """
+    Returns true if the provided state represents a provided victory state
+    :param player_state: The state under evaluation
+    :param victory_condition: The victory condition to test against
+    :return: True if the state represents the provided victory condition, false otherwise
+    """
     mask = player_state & victory_condition
     if mask ^ victory_condition == 0:
         return True
 
 
 def __score(current_player_state, opposing_player_state):
+    """
+    Method returns a score for a given player which
+    either returns an overwhelming score in victory or loss or the delta
+    between available current player victory conditions and opposing player
+    victory conditions. A positive value means that the current player
+    has more victory opportunities, a negative value means that the opposing
+    player has more victory opportunities
+    :param current_player_state: the current player state
+    :param opposing_player_state: the opposing player state
+    :return: the evaluated score for the given state
+    """
     current_player_victory_states_possible = (current_player_state | ~(opposing_player_state & __MASK)) & __MASK
     opposing_player_victory_states_possible = (opposing_player_state | ~(current_player_state& __MASK)) & __MASK
 
@@ -31,6 +52,12 @@ def __score(current_player_state, opposing_player_state):
 
 
 def __evaluating_state_function(maximizing_player, state):
+    """
+    Method returns the score of a given maximizing player.
+    :param maximizing_player: the player whose score we're currently maximizing
+    :param state: the state to score
+    :return: the evaluated score
+    """
     if maximizing_player == state.player1:
         return __score(state.player1_state, state.player2_state)
     else:
@@ -38,10 +65,24 @@ def __evaluating_state_function(maximizing_player, state):
 
 
 def evaluating_state_function(maximizing_player):
+    """
+    Method returns a function that scores a state,
+    based on the player who is being scored
+    :param maximizing_player:  the player being scored
+    :return: a function that scores a given tic-tac-toe state
+    """
     return lambda s: __evaluating_state_function(maximizing_player, s)
 
 
 def is_terminal(state: State, is_depth_remaining: bool, is_time_remaining: bool):
+    """
+    Method returns whether a state represents a terminal state for the game
+    :param state: the state under evaluation
+    :param is_depth_remaining: True if a tree-search function can continue in depth, False otherwise
+    :param is_time_remaining: True if time remains for a search function to operate, False otherwise
+    :return: True if the state represents a terminal state (no moves remaining, someone won, or a tie),
+             False otherwise
+    """
     if not is_depth_remaining or not is_time_remaining:
         return True
     for victory_condition in victory:
@@ -55,6 +96,12 @@ def is_terminal(state: State, is_depth_remaining: bool, is_time_remaining: bool)
 
 
 def result(state: State, action):
+    """
+    Method returns the state that results from a given action
+    :param state: the state under evaluation
+    :param action: the action to take
+    :return: the state that results from the given state
+    """
     next_state = state.copy()
     if next_state.current_player == next_state.player1:
         next_state.player1_state = next_state.player1_state | action
@@ -65,7 +112,12 @@ def result(state: State, action):
 
 
 def actions(state: State):
-
+    """
+    Method returns a list of possible moves given the current state.
+    Just searches for missing bits in our state
+    :param state: the state under evaluation
+    :return: list of possible moves
+    """
     valid_moves = []
     all_state = state.player1_state | state.player2_state
     for shift in range(0, 9):
