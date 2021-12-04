@@ -1,18 +1,18 @@
-from enum import Enum
+
 
 # Possible victory states
 
 
-_horiz_top = 0x01C0   # 000111000000
-_horiz_center = 0x38  # 000000111000
-_horiz_bottom = 0x07  # 000000000111
+_horiz_top = 0x01C0   # 0000000111000000
+_horiz_center = 0x38  # 0000000000111000
+_horiz_bottom = 0x07  # 0000000000000111
 
-_vert_left = 0x0124   # 000100100100
-_vert_center = 0x92   # 000010010010
-_vert_right = 0x49     # 000001001001
+_vert_left = 0x0124   # 0000000100100100
+_vert_center = 0x92   # 0000000010010010
+_vert_right = 0x49    # 0000000001001001
 
-_diag_right = 0x0111  # 000100010001
-_diag_left = 0x54    # 000001010100
+_diag_right = 0x0111  # 0000000100010001
+_diag_left = 0x54     # 0000000001010100
 
 
 victory_conditions = [_horiz_top, _horiz_center, _horiz_bottom,

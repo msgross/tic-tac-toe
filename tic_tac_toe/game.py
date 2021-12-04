@@ -1,5 +1,8 @@
-from state import State
-from state import victory_conditions as victory
+from tic_tac_toe.state import State
+from tic_tac_toe.state import victory_conditions as victory
+
+# mask out the bits we aren't using for evaluation
+__MASK = 0x01ff
 
 
 def __is_victory(player_state, victory_condition):
@@ -9,20 +12,22 @@ def __is_victory(player_state, victory_condition):
 
 
 def __score(current_player_state, opposing_player_state):
-    current_player_victory_states_possible = current_player_state | ~opposing_player_state
-    opposing_player_victory_states_possible = ~opposing_player_state | current_player_state
-    state_score = 0
+    current_player_victory_states_possible = (current_player_state | ~(opposing_player_state & __MASK)) & __MASK
+    opposing_player_victory_states_possible = (opposing_player_state | ~(current_player_state& __MASK)) & __MASK
+
+    current_player_score = 0
+    opposing_player_score = 0
     for victory_condition in victory:
         if __is_victory(current_player_state, victory_condition):
-            state_score += 100
+            return 100
         if __is_victory(opposing_player_state, victory_condition):
-            state_score -= 100
+            return -100
         if __is_victory(current_player_victory_states_possible, victory_condition):
-            state_score += 1
+            current_player_score += 1
         if __is_victory(opposing_player_victory_states_possible, victory_condition):
-            state_score -= 1
+            opposing_player_score += 1
 
-    return state_score
+    return current_player_score - opposing_player_score
 
 
 def __evaluating_state_function(maximizing_player, state):
@@ -69,3 +74,12 @@ def actions(state: State):
         if masked_state == 0:
             valid_moves.append(move)
     return valid_moves
+
+
+def translate(move):
+    """
+    Translate the serialization of a move into an action that the game can consume
+    :param move: Representation of a move to be taken that can be translated into an action
+    :return: the translated action
+    """
+    pass
