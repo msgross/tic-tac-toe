@@ -54,6 +54,23 @@ class TestGame(TestCase):
         self.assertTrue(tic_tac_toe.is_terminal(state, True, True), "Test draw condition")
         self.assertEqual(tic_tac_toe.evaluating_state_function(state.player1)(state), 0, "A draw should be score 0")
 
+    def test_translate(self):
+        player, move = tic_tac_toe.translate("1C1")
+        self.assertEqual(1, player, "Translate the player as player 1")
+        self.assertEqual(0x0001, move, "Move should go in  the bottom right corner")
+        player, move = tic_tac_toe.translate("2B2")
+        self.assertEqual(2, player, "Translate the player as player 1")
+        self.assertEqual(0x0010, move, "Move should go in the center")
+        player, move = tic_tac_toe.translate("1A3")
+        self.assertEqual(1, player, "Translate the player as player 1")
+        self.assertEqual(0x0100, move, "Move should go in top left corner")
+
+    def test_invalid_translate(self):
+        player, move = tic_tac_toe.translate("1D1")
+        self.assertIsNone(player)
+        self.assertIsNone(move)
+
+
 
 
 

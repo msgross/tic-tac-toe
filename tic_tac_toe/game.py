@@ -76,10 +76,37 @@ def actions(state: State):
     return valid_moves
 
 
-def translate(move):
+def translate(command):
     """
     Translate the serialization of a move into an action that the game can consume
-    :param move: Representation of a move to be taken that can be translated into an action
+    :param command: Representation of a move to be taken that can be translated into an action
     :return: the translated action
     """
-    pass
+    command_player = command[0:1]
+    if command_player != "1" and command_player != "2":
+        return None, None
+    player = int(command_player)
+
+    move = 0x0001
+    x_direction = command[1:2].lower()
+    if x_direction == "a":
+        move = move << 2
+    elif x_direction == "b":
+        move = move << 1
+    elif x_direction == "c":
+        move = move << 0
+    else:
+        return None, None
+
+    y_direction = command[2:3].lower()
+    y_val = int(y_direction)
+    if y_val == 1:
+        move = move << 0
+    elif y_val == 2:
+        move = move << 3
+    elif y_val == 3:
+        move = move << 6
+    else:
+        return None, None
+    return player, move
+
