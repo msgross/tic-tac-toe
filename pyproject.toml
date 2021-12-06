@@ -1,9 +1,12 @@
 [tool.poetry]
-name = "tic_tac_toe"
+name = "ttt"
 version = "0.1.0"
 description = "A game of standard tic-tac-toe"
 authors = ["mgross <mark@grossremarks.com>"]
 license = "MIT"
+packages = [
+    { include  = "tic_tac_toe" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
