@@ -65,8 +65,6 @@ class TestGame(TestCase):
         state.player2_state = 0b000100001110
         state.player1_state = 0b000011110000
         self.assertFalse(tic_tac_toe.is_terminal(state, True, True))
-        self.assertEqual(0,tic_tac_toe.evaluating_state_function(state.player1)(state),
-                         "An inevitable draw should be score 0")
 
     def test_is_draw(self):
         """
