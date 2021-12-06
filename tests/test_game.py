@@ -65,6 +65,9 @@ class TestGame(TestCase):
         state.player2_state = 0b000100001110
         state.player1_state = 0b000011110000
         self.assertFalse(tic_tac_toe.is_terminal(state, True, True))
+        self.assertEqual(-1, tic_tac_toe.evaluating_state_function(state.player1)(state),
+                         "An inevitable draw, but state evaluation is agnostic to who is going, "
+                         "so it will see that O technically has one victory condition possible")
 
     def test_is_draw(self):
         """
