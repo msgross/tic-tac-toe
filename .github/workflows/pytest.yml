@@ -1,0 +1,22 @@
+name: PyTest
+
+on: [push]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.10.0
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.10.0
+    - name: Install dependencies
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        $HOME/.local/bin/poetry install
+    - name: Run test
+      run: |
+        $HOME/.local/bin/poetry run pytest

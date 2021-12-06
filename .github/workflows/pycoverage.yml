@@ -1,0 +1,27 @@
+name: PyCoverage
+
+on: [push]
+
+jobs:
+  coverage:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.10.0
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.10.0
+    - name: Install dependencies
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        $HOME/.local/bin/poetry install
+    - name: Run coverage
+      run: |
+        $HOME/.local/bin/poetry run coverage run -m pytest
+        $HOME/.local/bin/poetry run coverage xml
+    - name: Upload coverage
+      uses: codecov/codecov-action@v2
+      with:
+        files: coverage.xml
