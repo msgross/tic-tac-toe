@@ -34,7 +34,7 @@ def __score(current_player_state, opposing_player_state):
     :return: the evaluated score for the given state
     """
     current_player_victory_states_possible = (current_player_state | ~(opposing_player_state & __MASK)) & __MASK
-    opposing_player_victory_states_possible = (opposing_player_state | ~(current_player_state& __MASK)) & __MASK
+    opposing_player_victory_states_possible = (opposing_player_state | ~(current_player_state & __MASK)) & __MASK
 
     current_player_score = 0
     opposing_player_score = 0
@@ -85,14 +85,7 @@ def is_terminal(state: State, is_depth_remaining: bool, is_time_remaining: bool)
     """
     if not is_depth_remaining or not is_time_remaining:
         return True
-    for victory_condition in victory:
-        if __is_victory(state.player1_state, victory_condition):
-            return True
-        elif __is_victory(state.player2_state, victory_condition):
-            return True
-    if state.player1_state | state.player2_state == 0x01FF:
-        return True
-    return False
+    return game_over(state)[0]
 
 
 def result(state: State, action):
@@ -162,3 +155,19 @@ def translate(command):
         return None, None
     return player, move
 
+
+def game_over(state):
+    """
+    Return whether the game is over and if it is, indicate the winner, and other
+    information if needed
+    :param state: the state to evaluate
+    :return: a tuple of [game_is_over, winner, metadata]
+    """
+    for victory_condition in victory:
+        if __is_victory(state.player1_state, victory_condition):
+            return True, state.player1, None
+        elif __is_victory(state.player2_state, victory_condition):
+            return True, state.player2, None
+    if state.player1_state | state.player2_state == 0x01FF:
+        return True, None, None
+    return False, None, None
