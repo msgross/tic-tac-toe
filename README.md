@@ -21,8 +21,4 @@ This implementation just maintains the state as a bit-state per player. Defined 
 do some bit operations to figure out potential win conditions and current state. The initial go at this was going 
 to make use of numpy arrays with masks, but no need to add complexity to a simple problem
 
-## Possible Extensions
-An *n* x *n* game where the rule is still 3 in a row might be fun to implement, in which case these rules would 
-essentially represent a frame, and we'd crawl over the grid and see if any victory conditions are available. 
-We'd need to make the scoring more flexible or open to variability than it is. 
 
